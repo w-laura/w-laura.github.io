@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Medium Feeatures">
+    <title>Final Project Report &ndash; Laura Wülfroth</title>
+
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/side-menu.css">
+    <link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading" href="index.html">Final Report</a>
+            <ul>
+                <li> <a href="report.html">Introduction</a></li>
+                <li> <a href="simple.html">Simple Features</a></li>
+                <li class="menu-item-divided pure-menu-selected">
+                    <a href="medium.html">Medium Features</a>
+                </li>
+                <li><a href="advanced.html">Advanced Feature</a></li>
+                <li><a href="other.html">Other Features</a></li>
+                <li><a href="final.html">Final Rendering</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <h1 class="content-subhead">Medium Features</h1>
+        </div>
+
+        <div class="content">
+
+            <h2 class="content-subhead">Disney BRDF</h2>
+
+            <li> <b>disneyBRDF.cpp</b> - implementation of the disney BRDF with eval, sample and pdf  </li>
+            <li> <b>warp.cpp</b> - implementations of GTR and GTR2 </li>
+            
+            <p> I wanted to be able to model a wide range of different surfaces. Therefore, the Disney's Principled BSDF was a logical choice, as it is a flexible surface appearance model. The model is not fully physically correct, but it was designed to allow a wide range of possible surfaces with as few parameters as possible. Some of these parameters can be seen in the image below, which is rendered using Nori: </p>
+
+            <div class="center">
+                <img src="images/disney_.png" alt="disney brdf" width="800"/>
+            </div>
+
+            <h4>Variables</h4>
+            To make sure all variables that are mentioned in the next paragraphs are clear.
+            <div class="center">
+                <img src="images/bsdf_diag.png" alt="diagram variables" width="300"/>
+            </div>
+
+            <p>
+            Linear interpolation:  \(lerp(t, a, b) = (1-t)a + tb\)<br>
+            </p>
+            
+            <h4>Diffuse Term</h4>
+            <p> In the original Disney's BRDF paper the authors use the Schlick Fresnel approximation for the diffuse term and define the base diffuse model as:
+                \[f_d=\frac{baseColor}{\pi}(1+(F_{D90}-1)(1-cos(\theta_i)^5)(1+(F_{D90}-1)(1-cos(\theta_o)^5)\] 
+                where \(F_{D90}=0.5+2 * roughness * cos^2(\theta_h)\). 
+            </p>
+
+            <h4>Specular and Clearcoat Term</h4>
+            <p> The Disney's BRDF uses the Microfacet model for the specular lobes with the Generalized-Trowbridge-Reitz (GTR) distribution as the normal distribution D For the specular lobe a value of \(\gamma = 2\) is used.
+                \[f_s(\theta_i, \theta_o) = \frac{D_{GTR}(\theta_h) F(\theta_i) G(\theta_i, \theta_o)}{4cos(\theta_i)cos(\theta_o)}\]
+                \[D_{GTR} = \frac{c}{(\alpha^2cos^2(\theta_h) + sin^2(\theta_h))^\gamma}\]
+                \[\alpha = roughness^2\]
+
+            The specular term controls the fresnel part of the model:
+            \[F(\theta) = lerp((1-cos(\theta_D)^5), specularColor, 1)\]
+            \[specularColor = lerp(metallic, 0.08 * specularTerm * mixTint, baseColor)\]
+            \[mixTint = lerp(specularTint, 1, color\_tint)\]
+            \[color\_tint = \frac{basecolor}{luminance}\]
+
+            See below for a comparison of the roughness values 0.0 and 0.5 on metal surfaces and non metal surfaces:
+            </p>
+            <div class="center">
+                <div class="pure-u-2-5">
+                    <div class="twentytwenty-container">
+                        <img src="images/samples/r1_metal_mine.png" alt="nori roughness=0.0"  class="img-responsive" >
+                        <img src="images/samples/r1_metal.png" alt="mitsuba roughness=0.0"  class="img-responsive">
+                        <img src="images/samples/r0.5_metal_mine.png" alt="nori roughness=0.5" class="img-responsive">
+                        <img src="images/samples/r0.5_metal.png" alt="mitsuba roughness=0.5" class="img-responsive">
+                    </div> 
+                </div> 
+                <div class="pure-u-2-5">
+                    <div class="twentytwenty-container">
+                        <img src="images/samples/r1_nometal_mine.png" alt="nori roughness=0.0"  class="img-responsive" >
+                        <img src="images/samples/r1_nometal.png" alt="mitsuba roughness=0.0"  class="img-responsive">
+                        <img src="images/samples/r0.5_nometal_mine.png" alt="nori roughness=0.5" class="img-responsive">
+                        <img src="images/samples/r0.5_nometal.png" alt="mitsuba roughness=0.5" class="img-responsive">
+                    </div> 
+                </div> 
+            </div>
+            <p> For the clearcoat lobe a second version of the GTR distribution is used with \(\gamma=1\). The IOR of the clearcoat is fixed to be 1.5 (value of polyurethane) and the strength of the clearcoat is defined by the clearcoat variable scaled to \([0..0.25]\). The roughness term for the clearcoat is defined as \(\alpha = lerp(clearcoatGloss, 0.2, 0.001)\). See below for a comparison of the clearcoat of Nori with Mitsuba. There is a small difference in brightness of the specularity of the clearcoat, which is caused by a slight differences in the implementation: </p>
+
+            <div class="center">
+            <div class="pure-u-2-5">
+                <div class="twentytwenty-container">
+                    <img src="images/samples/clearcoat_mine.png" alt="nori"  class="img-responsive" >
+                    <img src="images/samples/clearcoat_ref.png" alt="mitsuba"  class="img-responsive" >
+                </div> </div></div>
+
+            <h4>Sheen Term </h4>
+            <p> Sheen can typically be observed in cloth materials. The Disney's BRDF uses here the following term: \[f_{sheen} = F(\theta_h) * sheen * lerp(sheenTint, 1, baseColor)\] 
+            See below for a comparison of a sheen surface in Nori and Mitsuba.
+            </p>
+
+            <div class="center">
+            <div class="pure-u-2-5">
+            <div class="twentytwenty-container">
+                <img src="images/samples/rough.png" alt="nori sheen=0.0"  class="img-responsive" >
+                <img src="images/samples/rough_sheen.png" alt="nori sheen=1.0"  class="img-responsive" >
+                <img src="images/samples/rough_sheen_ref.png" alt="mitsuba sheen=1.0"  class="img-responsive">
+            </div> </div> </div>
+
+            <h4>Subsurface Term</h4>
+            <p> Disney's BRDF blends between the diffuse term and a Hanrahan-Krueger inspired model and is an approximation to a physical correct subsurface scattering model with short free mean paths:
+            \[diffuse_subsurface = lerp(subsurfaceTerm, diffuse, ss)\]
+            \[ss = 1.25 *(Fss * (\frac{1}{cos(\theta_i)+cos(\theta_o)}-0.5)+0.5)\]
+            \[Fss = lerp((1-cos(\theta_i)^5), 1, Fss90 ) * lerp((1-cos(\theta_o)^5), 1, Fss90 )\] 
+            \[Fss90 = cos(\theta_D)^2 * roughness\]
+         </p>
+
+            <div class="center">
+            <div class="pure-u-2-5">
+            <div class="twentytwenty-container">
+                <img src="images/samples/rough_nosubs.png" alt="subsurface=0.0"  class="img-responsive" >
+                <img src="images/samples/rough_subs.png" alt="subsurface=1.0"  class="img-responsive" >
+            </div> </div> </div>
+
+            <h4>Importance Sample</h4>
+            <p>
+                When sampling the BRDF the sampler decides to sample the diffuse or the specular lobe using the ratio \(\frac{1-metallic}{2}\). Diffuse samples are  sampled from a cosine weighted hemisphere. Specular samples are again devided into GTR2 (specular) with \(\gamma=2\) and GTR (clearcoat) with \(\gamma=1\) using the ratio \(\frac{1}{1+clearcoat}\). To validate the sampling of GTR and GTR2, I used the warptest framework:
+            </p>
+            GTR:
+            <div class="center">
+                <img src="images/GTR.png" alt="GTR1" width="800"/>
+            </div>
+            GTR2:
+            <div class="center">
+                <img src="images/GTR2.png" alt="GTR2" width="800"/>
+            </div>
+
+            <h2 class="content-subhead">Homogeneous Medium</h2>
+
+            <li> <b>medium.h and medium.cpp</b> - framework for new medium object  </li>
+            <li> <b>homogeneousMedium.cpp</b> - implementations of homogeneous medium </li>
+            <li> <b>path_mats_vol.cpp</b> - path tracer for volumetrics</li>
+            <li> <b>path_vol.cpp</b> - path tracer with multiple importance sampling for volumetrics</li>
+            <li> <b>phase.h</b> - framework for phase functions </li>
+            <li> <b>isotropic.cpp</b> - isotropic phase function</li>
+            <li> <b>henyeygreenstein.cpp</b> - henyey-greenstein phase function</li>
+            
+            <p> In order to render the particles in the water and the smoke of the cigar, I need to render volumetric participating media. Lets start with the homogeneous medium: </p>
+
+            <h4>Sampling</h4>
+
+            <p> The homogeneous medium supports importance sampling of the radiative transfer equation using the "sample" function. The method performs free path sampling to sample a distance t where it hits a particle and returns the throughput which is \(throughput = \sigma_s / \sigma_t \), since the transmittance and phase function and cancel out with the sampling probability. </p>
+
+            <h4>Path Tracer</h4>
+
+            <p> I implemented two versions of the path tracer. The first one is an extension of the path_mats.cpp and the second one an extension of path_mis.cpp. While looping over bounces the method keeps track of the medium the ray is currently in (can be null if no medium). As soon as we enter/leave a shape, which has an attached medium the current medium is changed. </p>
+
+            <p> Before the material or emitter sampling is happening, the path tracer checks if there is an intersection with a particle in the medium, which is done with the "sample" function in the medium class. If there is it updates the throughput and computes the next path using a phase function (isotropic or henyey-greenstein). If there is no particle intersection happening the method continues with a normal surface intersection. </p>
+
+            <p> For the multiple instance sampling path tracer, the emitter sampling has to be taken into account. In this case the shadowRay is traced and checked for intersections with shapes with surfaces. If the path goes through a medium the value is adjusted according to the transmittance of the medium. </p>
+
+            <h4>Isotropic Phase Function</h4>
+            <p> The isotropic phase function is a uniform distribution in all direction. It uses the Warp::squareToUniformSphere() function for sampling the direction and Warp::squareToUniformSpherePdf() to compute the probability. See below for a comparison of a medium rendered with the isotropic phase function in Nori and the one from Mitsuba. There are three spheres with different absorption and scattering values: bottom left - absorption = scattering = 0.5, bottom right - absorption = 0 and scattering = 1, top right - absorption = 1 and scattering = 0. The result is almost identical, the only difference is the noise in the medium, which might be caused due to a slighltly different multiple importance sampling strategy in Mitsuba. </p>
+
+            <div class="twentytwenty-container">
+                <img src="images/medium_isotropic_mine.png" alt="nori"  class="img-responsive" >
+                <img src="images/medium_isotropic.png" alt="mitsuba"  class="img-responsive" >
+            </div> 
+            <br>
+
+            <h4>Henyey-Greenstein Phase Function</h4>
+            <p> Using the henyey-greenstein phase function and the inversion method the following two equations can be derived to sample a direction:
+                \[cos(\theta) = \frac{1}{2g} (1+g^2 - (\frac{1-g^2}{1-g+2g\xi_1})^2)\]
+                \[\phi = 2\pi\xi_2\]
+            See below for a comparison of Henyey-Greenstein with the Isotropic phase function:
+            </p>
+
+            <div class="twentytwenty-container">
+                <img src="images/medium_hg-0.9.png" alt="g=-0.9"  class="img-responsive" >
+                <img src="images/medium_hg0.9.png" alt="g=0.9"  class="img-responsive" >
+                <img src="images/medium_iso.png" alt="isotropic"  class="img-responsive" >
+            </div> 
+            <br>
+
+    </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

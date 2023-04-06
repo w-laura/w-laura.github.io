@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Other Feeatures">
+    <title>Final Project Report &ndash; Laura Wülfroth</title>
+
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/side-menu.css">
+    <link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading" href="index.html">Final Report</a>
+            <ul>
+                <li> <a href="report.html">Introduction</a></li>
+                <li><a href="simple.html">Simple Features</a></li>
+                <li><a href="medium.html">Medium Features</a></li>
+                <li><a href="advanced.html">Advanced Feature</a></li>
+                <li class="menu-item-divided pure-menu-selected">
+                    <a href="other.html">Other Features</a>
+                </li>
+                <li><a href="final.html">Final Rendering</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <h1 class="content-subhead">Other Features (not graded)</h1>
+        </div>
+
+        <div class="content">
+
+            <h2 class="content-subhead">Environment Map</h2>
+            
+            <li> <b>envmap.cpp</b> - implementation of the Environment Map  </li>
+            <li> <b>path_mats.cpp, path_mis.cpp, path_vol.cpp, path_mats_vol.cpp </b> - everytime the path tracer exits the scene instead of returning a black color it returns the color of the environment map in this direction. When emitter sampling is happening the environment emitter is also sampled.</li>
+            <h2 class="content-subhead">Intel® Open Image Denoise </h2>
+            
+            <p> Initially I planned to use the denoiser as a graded feature but decided against it as there were some problems with it, which were solved later by replacing the gaussian reconstruction filter by a box reconstruction filter. See below for a comparison of the final rendering and its denoised version. </p>
+
+            <div class="twentytwenty-container">
+                <img src="images/final.png" alt="original"  class="img-responsive" >
+                <img src="images/final_denoised.png" alt="denoised"  class="img-responsive" >
+            </div> 
+
+    </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+</body>
+</html>

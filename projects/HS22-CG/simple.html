@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Simple Feeatures">
+    <title>Final Project Report &ndash; Laura Wülfroth</title>
+
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/side-menu.css">
+    <link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading" href="index.html">Final Report</a>
+            <ul>
+                <li> <a href="report.html">Introduction</a></li>
+                <li class="menu-item-divided pure-menu-selected">
+                    <a href="simple.html">Simple Features</a>
+                </li>
+                <li><a href="medium.html">Medium Features</a></li>
+                <li><a href="advanced.html">Advanced Feature</a></li>
+                <li><a href="other.html">Other Features</a></li>
+                <li><a href="final.html">Final Rendering</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <h1 class="content-subhead">Simple Features</h1>
+        </div>
+
+        <div class="content">
+
+            <h2 class="content-subhead">Image Textures</h2>
+
+            <li> <b>imageTexture.cpp</b> - contains all information for sampling from image textures </li>
+
+            <p>To model all the complex materials that are needed for my scene, it is essential to first implement textures into the renderer. In "imageTexture.cpp" a bitmap image (.exr) or a PNG file is loaded into memory. To load PNGs an additional library called lodepng was used <a href="https://lodev.org/lodepng/"><i>(source)</i></a>. Instead of having a fixed albedo color, the color is evaluated by sampling from the 2D image texture according to the uv position. The color value for a point on the mesh is bilinearly interpolated from the pixels of the image. See below for a comparison of a texture in Nori and Mitsuba: </p>
+
+            <div class="twentytwenty-container">
+                <img src="images/tex_mine.png" alt="Mine" class="img-responsive">
+                <img src="images/tex-mitsuba.png" alt="Mitsuba" class="img-responsive">
+            </div> 
+
+            <h2 class="content-subhead">Normal Mapping</h2>
+            
+            <li> <b>normalTexture.cpp</b> - contains all information for sampling from normal textures </li>
+            <li> <b>mesh.cpp</b> - in Mesh::setHitInformation the shading frame is computed acording to the normal map</li>
+
+            <p>Normal maps are an easy way to add additional detail to the surface without changing the geometry. The normal map sampling is implemented in normalTexture.cpp. The Normal Texture code is very similar to the Image Texture one from above, the only difference is the range of the values. While the color ranges from 0 to 1, the normals range from -1 to 1. Therefore, the rgb values have to be remapped to this range. In mesh.cpp in the Mesh::setHitInformation function the shading frame is then created using the normal sampled from the normal map. See below for a rendering with and without normal mapping:
+
+            <div class="twentytwenty-container">
+                <img src="images/no_texture.png" alt="Mine" class="img-responsive">
+                <img src="images/texture.png" alt="Mitsuba" class="img-responsive">
+            </div> 
+
+            <h2 class="content-subhead">Modelled my own meshes</h2>
+
+            <div class="center">
+                <img src="images/clay_rendering.png" alt="clay_rendering" width="800"/>
+            </div>
+            
+            <p> For the final project I modelled a couple of meshes myself, such as the building of the bar itself, the glowing jellyfish, the whisky glas and the octopus. I will show here the process of sculpting the octopus in Blender: </p>
+
+            <p> I started the process by creating a base mesh of the octopus, which consisted of two spheres for the head and eight tentacles made from curves with an applied skin modifier. In a next step, I sculpted some of the coarser details on the head with the Blender sculpting tools.  </p>
+
+            <div class="center">
+                <img src="images/octo1.png" alt="head_sculpting" width="800"/>
+            </div>
+
+            <p> Then, I joined all the tentacles with the head and smoothed out the connections. To be able to later change the mesh even with more details, I decided to do a complete retopology of the sculpting by hand and then use a multiresolution modifier. This workflow allows me to model the details and also keep the low resolution topology of the octopus. </p>
+
+            <div class="center">
+                <img src="images/octo2.png" alt="head_sculpting" width="800"/>
+            </div>
+
+            <p> With a high resolution subdevision I sculpted the small details on the octopus, such as the suction cups of the tentacles and the rough surface of the skin. 
+            </p>
+
+            <div class="center">
+                <img src="images/octo3.png" alt="head_sculpting" width="800"/>
+            </div>
+
+            <p> Finally, I painted a texture using the software ArmorPaint, as Blender is not the best tool for 3D painting and finished it up by adding a slightly rough normal map to the mesh. </p>
+
+
+
+
+    </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

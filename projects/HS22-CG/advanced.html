@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Advanced Feeatures">
+    <title>Final Project Report &ndash; Laura Wülfroth</title>
+
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/side-menu.css">
+    <link href="resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <div class="pure-menu pure-menu-open">
+            <a class="pure-menu-heading" href="index.html">Final Report</a>
+            <ul>
+                <li> <a href="report.html">Introduction</a></li>
+                <li><a href="simple.html">Simple Features</a></li>
+                <li><a href="medium.html">Medium Features</a></li>
+                <li class="menu-item-divided pure-menu-selected">
+                    <a href="advanced.html">Advanced Feature</a>
+                </li>
+
+                <li><a href="other.html">Other Features</a></li>
+                <li><a href="final.html">Final Rendering</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <h1 class="content-subhead">Advanced Features</h1>
+        </div>
+
+        <div class="content">
+
+            <h2 class="content-subhead">Heterogeneous Participating Medium</h2>
+
+            <li> <b>gridMedium.cpp</b> - implementations of heterogeneous medium using a 3D voxel grid</li>
+            
+            <p> Heterogeneous media are often represented as voxel grids. To be able to compare the scene with Mitsuba, I implemented a voxel grid based on Mitsuba's voxel data format. My implementation is similar but not identical, which leads to slight differences in the volume as one can see in the comparison below. I decided to use Delta Tracking instead of Ray Marching, due to the bias of the latter one. </p>
+
+            <p> I tried to get the Mitsuba2-vdb-converter <a href="https://github.com/mitsuba-renderer/mitsuba2-vdb-converter"><i>(source)</i></a> to work, to be able to load in any .vdb file. Sadly, I was not able to build it in the end, due to compilation errors on Windows. Therefore, I had to work with some .vol voxel grids that were provided by Mitsuba. </p>
+
+            <div class="center">
+                <img src="images/hetero.png" alt="heterogeneous_smoke" width="800"/>
+            </div>
+
+            <div class="twentytwenty-container">
+                <img src="images/hetero_mine.png" alt="nori"  class="img-responsive" >
+                <img src="images/hetero_mitsuba.png" alt="mitsuba"  class="img-responsive" >
+            </div> 
+
+    </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="resources/jquery.event.move.js"></script>
+<script src="resources/jquery.twentytwenty.js"></script>
+
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>
