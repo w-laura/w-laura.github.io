@@ -259,4 +259,34 @@
    */
   new PureCounter();
 
+  /**
+   * TwoMoons sketches slider
+   */
+  const sketchesSliderEl = document.querySelector('.tm-sketches-slider');
+  if (sketchesSliderEl) {
+    const lightbox = GLightbox({ selector: '.glightbox' });
+
+    new Swiper('.tm-sketches-slider', {
+      loop: false,              // safer with few slides
+      watchOverflow: true,      // disables nav if not needed
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.tm-sketches-slider .swiper-button-next',
+        prevEl: '.tm-sketches-slider .swiper-button-prev'
+      },
+      pagination: {
+        el: '.tm-sketches-slider .swiper-pagination',
+        clickable: true
+      },
+      slidesPerView: 2,
+      breakpoints: {
+        0:   { slidesPerView: 1.3 },
+        576: { slidesPerView: 2 },
+        768: { slidesPerView: 2.2 },
+        992: { slidesPerView: 2.5 } // stays < 3 so it can slide with 3 items
+      }
+    });
+  }
+
+
 })()

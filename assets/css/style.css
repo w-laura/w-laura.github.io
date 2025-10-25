@@ -1092,3 +1092,35 @@ section {
     padding-right: 20px 15px;
   }
 }
+
+/*--------------------------------------------------------------
+# TwoMoons
+--------------------------------------------------------------*/
+
+.tm-sketches-slider {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tm-sketches-slider .swiper-slide {
+  text-align: center;
+}
+
+.tm-sketches-slider .swiper-slide img {
+  width: auto;                /* keep natural aspect ratio */
+  max-height: 512px;          /* 👈 smaller image height */
+  border-radius: 6px;
+  object-fit: cover;
+  display: inline-block;
+}
+
+.tm-sketches-slider .swiper-pagination {
+  margin-top: 6px;
+}
+
+.tm-gallery img {
+  height: 240px;            /* 👈 set consistent height (adjust as you like) */
+  width: 100%;
+  object-fit: cover;        /* crops nicely without distortion */
+  border-radius: 8px;       /* matches your existing rounded style */
+}
